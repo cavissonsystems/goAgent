@@ -7,9 +7,9 @@ import (
         "net/http"
         "github.com/labstack/echo"
         "github.com/labstack/echo/middleware"
-        md "go-agent/module/cavecho"
-	nd "go-agent"
-	ht "go-agent/module/cavhttp"
+        md "goAgent/module/cavecho"
+	nd "goAgent"
+	ht "goAgent/module/cavhttp"
 	"context"
 )
 

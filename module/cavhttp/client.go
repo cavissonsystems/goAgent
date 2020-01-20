@@ -2,7 +2,7 @@ package cavhttp
 
 import (
 	"net/http"
-        nd "go-agent"
+        nd "goAgent"
 
 )
 

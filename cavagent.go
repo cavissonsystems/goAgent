@@ -1,4 +1,4 @@
-package nd
+package goAgent
 
 /*
 #include <stdlib.h>
