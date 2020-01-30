@@ -123,11 +123,9 @@ func (c contextRingClient) WithContext(ctx context.Context) Client {
 func process(ctx context.Context) func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
 	return func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
 		return func(cmd redis.Cmder) error {
-		//	spanName := strings.ToUpper(cmd.Name())
-		//	span, _ := apm.StartSpan(ctx, spanName, "db.redis")
-		//	defer span.End()
-			fmt.Printf("____________________________________________________process called\n")
-			fmt.Printf("++++++++++++++++++++++++++++++++++++++++++++++++++++%v\n",cmd.Name())
+	
+			fmt.Printf("process called\n")
+			fmt.Printf("\n",cmd.Name())
                         bt := ctx.Value("CavissonTx").(uint64)
                         db_handle :=  nd.IP_db_callout_begin(bt ,"db.redis", cmd.Name())
                         defer nd.IP_db_callout_end(bt , db_handle)
@@ -138,20 +136,19 @@ func process(ctx context.Context) func(oldProcess func(cmd redis.Cmder) error) f
 func processPipeline(ctx context.Context) func(oldProcess func(cmds []redis.Cmder) error) func(cmds []redis.Cmder) error {
 	return func(oldProcess func(cmds []redis.Cmder) error) func(cmds []redis.Cmder) error {
 		return func(cmds []redis.Cmder) error {
-		//	pipelineSpan, ctx := apm.StartSpan(ctx, "(pipeline)", "db.redis")
-		               fmt.Printf("____________________________________________processpipelinecalled")
+		
+		               fmt.Printf("processpipelinecalled")
 			for i := len(cmds); i > 0; i-- {
 				cmdName := strings.ToUpper(cmds[i-1].Name())
-				fmt.Printf("____________________________________________processpipelinecalled")
+				fmt.Printf("processpipelinecalled")
 				if cmdName == "" {
 					cmdName = "(empty command)"
 				}
 
-		//		span, _ := apm.StartSpan(ctx, cmdName, "db.redis")
-		//		defer span.End()
+                                bt := ctx.Value("CavissonTx").(uint64)
+                                db_handle :=  nd.IP_db_callout_begin(bt ,"db.redis", cmdName)
+                                defer nd.IP_db_callout_end(bt , db_handle)
 			}
-
-		//	defer pipelineSpan.End()
 
 			return oldProcess(cmds)
 		}

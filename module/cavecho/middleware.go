@@ -28,10 +28,8 @@ func (m *middleware) handle(c echo.Context) error {
         req := c.Request()
 	name := c.Path()
         req = nd.Start_transacation(name,req)
-
         c.SetRequest(req)
         bt:= nd.Current_Transaction(req.Context())
-        
         defer nd.BT_end(bt)
         nd.BT_store(bt,unique_id)
         resp := c.Response()
