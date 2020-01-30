@@ -20,6 +20,8 @@ type middleware struct {
 
 }
 
+//func context_redis()echo.Context {
+  //     return echo.;
 
 func (m *middleware) handle(c echo.Context) error {
         unique_id:="1"
@@ -29,7 +31,7 @@ func (m *middleware) handle(c echo.Context) error {
 
         c.SetRequest(req)
         bt:= nd.Current_Transaction(req.Context())
-
+        
         defer nd.BT_end(bt)
         nd.BT_store(bt,unique_id)
         resp := c.Response()

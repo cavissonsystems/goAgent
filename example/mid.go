@@ -78,7 +78,7 @@ func mainAdmin(c echo.Context)error{
         ctx := req.Context()
 
         call_wrapclient(ctx)
-
+        Call_redis(ctx)
         bt := ctx.Value("CavissonTx").(uint64)
 
         m1(bt)
