@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql/driver"
 	"errors"
-	//"go.elastic.co/apm"
+	nd "goAgent"
 )
 
 func newConn(in driver.Conn, d *tracingDriver, dsnInfo DSNInfo) driver.Conn {
@@ -18,20 +18,14 @@ func newConn(in driver.Conn, d *tracingDriver, dsnInfo DSNInfo) driver.Conn {
 	conn.execer, _ = in.(driver.Execer)
 	conn.execerContext, _ = in.(driver.ExecerContext)
 	conn.connBeginTx, _ = in.(driver.ConnBeginTx)
-	//conn.connGo110.init(in)
 	if in, ok := in.(driver.ConnBeginTx); ok {
 		return &connBeginTx{conn, in}
 	}
 	return conn
 }
 
-// /*type connGo110 struct {
-// 	sessionResetter driver.SessionResetter
-// }*/
-
 type conn struct {
 	driver.Conn
-	//connGo110
 	driver  *tracingDriver
 	dsnInfo DSNInfo
 
@@ -45,130 +39,63 @@ type conn struct {
 	connBeginTx        driver.ConnBeginTx
 }
 
-// namedValueToValue copied from database/sql (see NOTICE).
 func namedValueToValue(named []driver.NamedValue) ([]driver.Value, error) {
 	dargs := make([]driver.Value, len(named))
 	for n, param := range named {
 		if len(param.Name) > 0 {
-			return nil, errors.New("sql: driver does not support the use of Named Parameters")
+		      return nil, errors.New("sql: driver does not support the use of Named Parameters")
 		}
 		dargs[n] = param.Value
 	}
 	return dargs, nil
 }
 
-// namedValueChecker is identical to driver.NamedValueChecker, existing
-// for compatibility with Go 1.8.
 type namedValueChecker interface {
-	CheckNamedValue(*driver.NamedValue) error
+     CheckNamedValue(*driver.NamedValue) error
 }
 
 func checkNamedValue(nv *driver.NamedValue, next namedValueChecker) error {
 	if next != nil {
-		return next.CheckNamedValue(nv)
+	   return next.CheckNamedValue(nv)
 	}
 	return driver.ErrSkip
 }
 
-/* func (c *conn) startStmtSpan(ctx context.Context, stmt, spanType string) (*apm.Span, context.Context) {
-return c.startSpan(ctx, c.driver.querySignature(stmt), spanType, stmt)
-}
-
- func (c *conn) startSpan(ctx context.Context, name, spanType, stmt string) (*apm.Span, context.Context) {
- span, ctx := apm.StartSpan(ctx, name, spanType)
- if !span.Dropped() {
- if c.dsnInfo.Address != "" {
- span.Context.SetDestinationAddress(c.dsnInfo.Address, c.dsnInfo.Port)
- span.Context.SetDestinationService(apm.DestinationServiceSpanContext{
- Name:     c.driver.driverName,
- 	Resource: c.driver.driverName,
- })
- } */
-
-/*span.Context.SetDatabase(apm.DatabaseSpanContext{
-Instance:  c.dsnInfo.Database,
-Statement: stmt,
-Type:      "sql",
-User:      c.dsnInfo.User,
-})
-}
-return span, ctx
-}*/
-
-/*func (c *conn) finishSpan(ctx context.Context, span *apm.Span, result *driver.Result, resultError *error) {
-if *resultError == driver.ErrSkip {
- TODO(axw) mark span as abandoned,
- so it's not sent and not counted
- in the span limit. Ideally remove
- from the slice so memory is kept
- in check.
-return
-}
-switch *resultError {
-case nil:
-if !span.Dropped() && result != nil && *result != nil && *result != driver.ResultNoRows {
-rowsAffected, err := (*result).RowsAffected()
-if err == nil && rowsAffected >= 0 {
-span.Context.SetDatabaseRowsAffected(rowsAffected)
-}
-}
-case driver.ErrBadConn, context.Canceled:
-// ErrBadConn is used by the connection pooling
-// logic in database/sql, and so is expected and
-// should not be reported.
-//
-// context.Canceled means the callers canceled
-// the operation, so this is also expected.
-default:
-if e := apm.CaptureError(ctx, *resultError); e != nil {
-e.Send()
- }
-}
-span.End()
-} */
-/*func (c *conn) Ping(ctx context.Context) (resultError error) {
+func (c *conn) Ping(ctx context.Context) (resultError error) {
 	if c.pinger == nil {
-		return nil
+	   return nil
 	}
-	//span, ctx := c.startSpan(ctx, "ping", c.driver.pingSpanType, "")
-	//defer c.finishSpan(ctx, span, nil, &resultError)
+	bt := ctx.Value("CavissonTx").(uint64)
+	handle := nd.IP_db_callout_begin(bt, "db_host", "query")
+	defer nd.IP_db_callout_end(bt, handle)
 	return c.pinger.Ping(ctx)
 }
 
 func (c *conn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (_ driver.Rows, resultError error) {
 	if c.queryerContext == nil && c.queryer == nil {
-		return nil, driver.ErrSkip
+	   return nil, driver.ErrSkip
 	}
-	//span, ctx := c.startStmtSpan(ctx, query, c.driver.querySpanType)
-	//defer c.finishSpan(ctx, span, nil, &resultError)
 
-	//if c.queryerContext != nil {
-	//return c.queryerContext.QueryContext(ctx, query, args)
+	if c.queryerContext != nil {
+	   return c.queryerContext.QueryContext(ctx, query, args)
+	}
+
+	dargs, err := namedValueToValue(args)
+	if err != nil {
+	   return nil, err
+	}
+	select {
+	default:
+	case <-ctx.Done():
+	     return nil, ctx.Err()
+	}
+	return c.queryer.Query(query, dargs)
 }
-
-// /*dargs, err := namedValueToValue(args)
-// if err != nil {
-// return nil, err
-// }
-// select {
-// default:
-// case <-ctx.Done():
-// return nil, ctx.Err()
-// }
-// return c.queryer.Query(query, dargs)
-// }*/
-
-func (c *conn) Query(query string, args []driver.Value) (driver.Rows, error) {
-	return nil, errors.New("Query should never be called")
-}
-
 func (c *conn) PrepareContext(ctx context.Context, query string) (_ driver.Stmt, resultError error) {
-	//span, ctx := c.startStmtSpan(ctx, query, c.driver.prepareSpanType)
-	//defer c.finishSpan(ctx, span, nil, &resultError)
 	var stmt driver.Stmt
 	var err error
 	if c.connPrepareContext != nil {
-		stmt, err = c.connPrepareContext.PrepareContext(ctx, query)
+	   stmt, err = c.connPrepareContext.PrepareContext(ctx, query)
 	} else {
 		stmt, err = c.Prepare(query)
 		if err == nil {
@@ -181,39 +108,36 @@ func (c *conn) PrepareContext(ctx context.Context, query string) (_ driver.Stmt,
 		}
 	}
 	if stmt != nil {
-		stmt = newStmt(stmt, c, query)
+	   stmt = newStmt(stmt, c, query)
 	}
 	return stmt, err
 }
 
-/*func (c *conn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (result driver.Result, resultError error) {
+func (c *conn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (result driver.Result, resultError error) {
 	if c.execerContext == nil && c.execer == nil {
-		return nil, driver.ErrSkip
+	   return nil, driver.ErrSkip
 	}
-	//span, ctx := c.startStmtSpan(ctx, query, c.driver.execSpanType)
-	//defer c.finishSpan(ctx, span, &result, &resultError)
-
 	if c.execerContext != nil {
-		return c.execerContext.ExecContext(ctx, query, args)
+	   return c.execerContext.ExecContext(ctx, query, args)
 	}
 	dargs, err := namedValueToValue(args)
 	if err != nil {
-		return nil, err
+	   return nil, err
 	}
 	select {
 	default:
 	case <-ctx.Done():
-		return nil, ctx.Err()
+	     return nil, ctx.Err()
 	}
 	return c.execer.Exec(query, dargs)
-}*/
+}
 
 func (*conn) Exec(query string, args []driver.Value) (driver.Result, error) {
-	return nil, errors.New("Exec should never be called")
+     return nil, errors.New("Exec should never be called")
 }
 
 func (c *conn) CheckNamedValue(nv *driver.NamedValue) error {
-	return checkNamedValue(nv, c.namedValueChecker)
+     return checkNamedValue(nv, c.namedValueChecker)
 }
 
 type connBeginTx struct {
@@ -222,6 +146,5 @@ type connBeginTx struct {
 }
 
 func (c *connBeginTx) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, error) {
-	// TODO(axw) instrument commit/rollback?
-	return c.connBeginTx.BeginTx(ctx, opts)
+     return c.connBeginTx.BeginTx(ctx, opts)
 }

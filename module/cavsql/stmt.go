@@ -34,9 +34,9 @@ type stmt struct {
 	stmtQueryContext  driver.StmtQueryContext
 }
 
-/*func (s *stmt) startSpan(ctx context.Context, spanType string) (*apm.Span, context.Context) {
-	return s.conn.startSpan(ctx, s.signature, spanType, s.query)
-}*/
+// func (s *stmt) startSpan(ctx context.Context, spanType string) (*apm.Span, context.Context) {
+//	return s.conn.startSpan(ctx, s.signature, spanType, s.query)
+// }
 
 func (s *stmt) ColumnConverter(idx int) driver.ValueConverter {
 	if s.columnConverter != nil {

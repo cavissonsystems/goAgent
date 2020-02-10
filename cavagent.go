@@ -1,4 +1,4 @@
-package goAgent
+package nd
 
 /*
 #include <stdlib.h>
@@ -23,9 +23,11 @@ ndIPCallOutHandle ip_int_to_handle(uintptr_t bt) {
 import "C"
 
 import (
+	"context"
+	"log"
+	"net/http"
+	"os"
 	"unsafe"
-        "net/http"
-        "context"
 )
 
 func Method_entry(bt uint64, method string) {
@@ -48,34 +50,43 @@ func Sdk_free() {
 	C.nd_free()
 }
 
-func Updated_context(ctx context.Context,bt uint64)(context.Context){
-	return context.WithValue(ctx,"CavissonTx",bt)
+func Updated_context(ctx context.Context, bt uint64) context.Context {
+	return context.WithValue(ctx, "CavissonTx", bt)
 }
 
-func RequestWithContext(ctx context.Context,req *http.Request)(*http.Request){
+func RequestWithContext(ctx context.Context, req *http.Request) *http.Request {
 	reqCopy := req.WithContext(ctx)
 	return reqCopy
 }
 
-func Start_transacation(name string, req *http.Request)(*http.Request){
-	bt := BT_begin(name,"")
-	ctx :=req.Context()
-	new_ctx :=Updated_context(ctx,bt)
-	req =RequestWithContext(new_ctx, req)
+func Start_transacation(name string, req *http.Request) *http.Request {
+	bt := BT_begin(name, "")
+	if bt == 0 {
+		log.Println("Error: bt returned can't be zero")
+		os.Exit(1)
+	}
+	ctx := req.Context()
+	new_ctx := Updated_context(ctx, bt)
+	req = RequestWithContext(new_ctx, req)
 	return req
 }
 
-func Current_Transaction(ctx context.Context) (uint64) {
-	return ctx.Value("CavissonTx").(uint64)
+func Current_Transaction(ctx context.Context) uint64 {
+	bt_value := ctx.Value("CavissonTx")
+	if bt_value == nil {
+		log.Println("Error : bt returned can't be null")
+		os.Exit(1)
+	}
+	return bt_value.(uint64)
 }
 
 func BT_begin(bt_name string, correlation_header string) uint64 {
-        bt_name_c := C.CString(bt_name)
-        correlation_header_c := C.CString(correlation_header)
+	bt_name_c := C.CString(bt_name)
+	correlation_header_c := C.CString(correlation_header)
 	defer C.free(unsafe.Pointer(bt_name_c))
 	defer C.free(unsafe.Pointer(correlation_header_c))
 	bt := C.nd_bt_begin(bt_name_c, correlation_header_c)
-        return uint64(C.bt_handle_to_int(bt))
+	return uint64(C.bt_handle_to_int(bt))
 }
 
 func BT_end(bt uint64) int {

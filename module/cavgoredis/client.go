@@ -1,11 +1,10 @@
 package cavgoredis
 import (
-"fmt"
-"github.com/go-redis/redis"
-//"gopkg.in/go-redis/redis.v6"
-nd "goAgent"
-"context"
-"strings"
+	"fmt"
+	"github.com/go-redis/redis"
+	nd "goAgent"
+	"context"
+	"strings"
 )
 
 type Client interface {
@@ -26,7 +25,6 @@ type Client interface {
 	// WithContext returns a shallow copy of the client with
 	// its context changed to ctx and will add instrumentation
 	// with client.WrapProcess and client.WrapProcessPipeline
-	//
 	// To report commands as spans, ctx must contain a transaction or span.
 	WithContext(ctx context.Context) Client
 }
@@ -116,15 +114,13 @@ func (c contextRingClient) WithContext(ctx context.Context) Client {
 
 	c.WrapProcess(process(ctx))
 	c.WrapProcessPipeline(processPipeline(ctx))
-      
+
 	return c
 }
 
 func process(ctx context.Context) func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
 	return func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
 		return func(cmd redis.Cmder) error {
-	
-			fmt.Printf("process called\n")
 			fmt.Printf("\n",cmd.Name())
                         bt := ctx.Value("CavissonTx").(uint64)
                         db_handle :=  nd.IP_db_callout_begin(bt ,"db.redis", cmd.Name())
@@ -136,11 +132,8 @@ func process(ctx context.Context) func(oldProcess func(cmd redis.Cmder) error) f
 func processPipeline(ctx context.Context) func(oldProcess func(cmds []redis.Cmder) error) func(cmds []redis.Cmder) error {
 	return func(oldProcess func(cmds []redis.Cmder) error) func(cmds []redis.Cmder) error {
 		return func(cmds []redis.Cmder) error {
-		
-		               fmt.Printf("processpipelinecalled")
-			for i := len(cmds); i > 0; i-- {
+			        for i := len(cmds); i > 0; i-- {
 				cmdName := strings.ToUpper(cmds[i-1].Name())
-				fmt.Printf("processpipelinecalled")
 				if cmdName == "" {
 					cmdName = "(empty command)"
 				}

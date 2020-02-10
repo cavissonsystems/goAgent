@@ -47,14 +47,14 @@ func call_wrapclient(ctx context.Context){
 
         req, err := http.NewRequest("GET", "https://www.geeksforgeeks.org/find-triplets-array-whose-sum-equal-zero", nil)
 	if err != nil {
-		log.Println("Error : creating on new request")
+		log.Fatalf("%v", err)
 	}
         req = req.WithContext(ctx)
 
 	resp, err := client.Do(req)
 
 	if err != nil {
-		log.Println("Error : reading response. ")
+		log.Fatal("Error reading recsponse. ", err)
 	}
 	defer resp.Body.Close()
 
@@ -67,7 +67,7 @@ func call_wrapclient(ctx context.Context){
 	// writing the output to a file
 	out, err := os.Create("ResponseBody.txt")
 	if err != nil {
-		log.Println("Error : creating responsebody txt file. ")
+		log.Fatal("Error creating responsebody txt file. ", err)
 	}
 	defer out.Close()
 	io.Copy(out,resp.Body)
@@ -78,9 +78,10 @@ func mainAdmin(c echo.Context)error{
         ctx := req.Context()
 
         call_wrapclient(ctx)
+        Call_mongo(ctx)
 
         bt := ctx.Value("CavissonTx").(uint64)
-
+       
         m1(bt)
 
 	return c.String(http.StatusOK,"ID is coming")

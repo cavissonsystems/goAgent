@@ -1,7 +1,7 @@
 package main
 
 import(
-         "context"
+        "context"
         "github.com/go-redis/redis"
         "goAgent/module/cavgoredis"
         "fmt"
@@ -58,6 +58,7 @@ var (
 		},
 	}
 )
+
 func Call_redis(ctx context.Context) {
 
 	fmt.Println("Go Redis Tutorial")
@@ -67,20 +68,19 @@ func Call_redis(ctx context.Context) {
 		Password: "",
 		DB: 0,
 	})
-        
-      //  ctx := context.WithValue(context.Background(), "language", "Go")
+
         client1 := cavgoredis.Wrap(client).WithContext(ctx)
 	pong, err := client1.Ping().Result()
 	fmt.Println(pong, err)
 
 	err = client1.Set("name", "Elliot", 0).Err()
 	if err != nil {
-    	log.Println("Error : inserting value in redis" )
+		log.Println("Error : inserting value in redis" )
 	}
 
 	val, err := client1.Get("name").Result()
 	if err != nil {
-    	log.Println("Error : retrieving value from redis")
+		log.Println("Error : retrieving value from redis")
 	}
 	fmt.Println(val)
 
