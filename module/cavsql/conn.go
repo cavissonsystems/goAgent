@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql/driver"
 	"errors"
+         "fmt"
 	nd "goAgent"
 )
 
@@ -62,11 +63,14 @@ func checkNamedValue(nv *driver.NamedValue, next namedValueChecker) error {
 }
 
 func (c *conn) Ping(ctx context.Context) (resultError error) {
-	if c.pinger == nil {
+	fmt.Printf("conn.go(ping) here it is printing\n")
+      if c.pinger == nil {
 	   return nil
 	}
 	bt := ctx.Value("CavissonTx").(uint64)
+	fmt.Println(bt)
 	handle := nd.IP_db_callout_begin(bt, "db_host", "query")
+	fmt.Println(handle)
 	defer nd.IP_db_callout_end(bt, handle)
 	return c.pinger.Ping(ctx)
 }

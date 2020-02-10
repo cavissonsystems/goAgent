@@ -25,8 +25,9 @@ var (
 	db  *sql.DB
 )
 
-func pingAndQueryDB(db *sql.DB, bt uint64) {
+func pingAndQueryDB(db *sql.DB, bt uint64,ctx context.Context) {
 	nd.Method_entry(bt, "pingAndQueryDB")
+	fmt.Println("Value of bt from main.go is", bt)
 	{
 		ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 		//ctx, cancel := context.WithCancel(context.Background())
@@ -61,7 +62,7 @@ func pingAndQueryDB(db *sql.DB, bt uint64) {
 		fmt.Printf("%s, %s, %s,%s,%s \n", bk.name, bk.owner, bk.species, bk.sex, bk.birth)
 	}
 	nd.Method_exit(bt, "pingAndQueryDB")
-	time.Sleep(5 * time.Second)
+	//time.Sleep(5 * time.Second)
 }
 
 func callExample() {
@@ -84,7 +85,7 @@ func callExample() {
 		log.Fatal(err)
 	}
 	for i := 0; i < 10; i++ {
-		pingAndQueryDB(db, bt)
+		pingAndQueryDB(db, bt,ctx)
 	}
 
 	time.Sleep(5 * time.Second)
