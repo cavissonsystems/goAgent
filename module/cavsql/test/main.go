@@ -29,9 +29,9 @@ func pingAndQueryDB(db *sql.DB, bt uint64,ctx context.Context) {
 	nd.Method_entry(bt, "pingAndQueryDB")
 	fmt.Println("Value of bt from main.go is", bt)
 	{
-		ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
-		//ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
+		//ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
+	        //ctx, cancel := context.WithCancel(ctx)
+	        //defer cancel()
 
 		status := " Connection is up"
 		if err := db.PingContext(ctx); err != nil {
@@ -39,7 +39,7 @@ func pingAndQueryDB(db *sql.DB, bt uint64,ctx context.Context) {
 		}
 		log.Println(status)
 	}
-	rows, err := db.Query("SELECT * FROM pet")
+	rows, err := db.QueryContext(ctx,"SELECT * FROM pet")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,7 +71,7 @@ func callExample() {
 	// method entry
 	nd.BT_store(bt, "122")
 	nd.Method_entry(bt, "callExample")
-	// call bt be0gin here of sdk
+	// call bt begin here of sdk
 	ctx := context.Background()
 	// create new context -- using background method
 	ctx = context.WithValue(ctx, "CavissonTx", bt)
@@ -84,11 +84,11 @@ func callExample() {
 		log.Println("Error opening DB")
 		log.Fatal(err)
 	}
-	for i := 0; i < 10; i++ {
-		pingAndQueryDB(db, bt,ctx)
-	}
 
-	time.Sleep(5 * time.Second)
+	for i := 0; i < 10; i++ {
+		pingAndQueryDB(db, bt, ctx)
+		time.Sleep(10 * time.Second)
+	}
 
 	nd.Method_exit(bt, "callExample")
 	time.Sleep(5 * time.Second)
@@ -101,5 +101,6 @@ func callExample() {
 func main() {
 	nd.Sdk_init()
 	callExample()
+	time.Sleep(30 * time.Second)
 	nd.Sdk_free()
 }

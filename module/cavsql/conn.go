@@ -63,22 +63,28 @@ func checkNamedValue(nv *driver.NamedValue, next namedValueChecker) error {
 }
 
 func (c *conn) Ping(ctx context.Context) (resultError error) {
-	fmt.Printf("conn.go(ping) here it is printing\n")
+//	fmt.Printf("conn.go(ping) here it is printing\n")
       if c.pinger == nil {
 	   return nil
 	}
-	bt := ctx.Value("CavissonTx").(uint64)
-	fmt.Println(bt)
-	handle := nd.IP_db_callout_begin(bt, "db_host", "query")
-	fmt.Println(handle)
-	defer nd.IP_db_callout_end(bt, handle)
+//	bt := ctx.Value("CavissonTx").(uint64)
+//	fmt.Println(bt)
+//	handle := nd.IP_db_callout_begin(bt, "db_host", "query")
+//	fmt.Println(handle)
+	//defer nd.IP_db_callout_end(bt, handle)
 	return c.pinger.Ping(ctx)
 }
 
 func (c *conn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (_ driver.Rows, resultError error) {
+       fmt.Println("query context")
 	if c.queryerContext == nil && c.queryer == nil {
 	   return nil, driver.ErrSkip
 	}
+	bt := ctx.Value("CavissonTx").(uint64)
+        fmt.Println(bt)
+        handle := nd.IP_db_callout_begin(bt, "db_host_1", "query")
+        fmt.Println(handle)
+        defer nd.IP_db_callout_end(bt, handle)
 
 	if c.queryerContext != nil {
 	   return c.queryerContext.QueryContext(ctx, query, args)
