@@ -39,10 +39,6 @@ func ErrorPrint(s string){
     Error.Println(s)
 }
 
-func Lol(s string){
-    log.Println(s)
-}
-
 func main(){
     OpenFiles()
 }
