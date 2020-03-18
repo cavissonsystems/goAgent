@@ -39,6 +39,3 @@ func ErrorPrint(s string){
     Error.Println(s)
 }
 
-func main(){
-    OpenFiles()
-}

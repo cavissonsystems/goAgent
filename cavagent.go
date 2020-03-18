@@ -24,9 +24,7 @@ import "C"
 
 import (
 	"context"
-//	"log"
 	"net/http"
-//	"os"
 	"unsafe"
 	logger "goAgent/logger"
 )
@@ -77,7 +75,7 @@ func Start_transacation(name string, req *http.Request) *http.Request {
 func Current_Transaction(ctx context.Context) uint64 {
 	bt_value := ctx.Value("CavissonTx")
 	var str string = "Error: bt returned can't be zero"
-	if bt_value == nil {
+	if bt_value.(uint64) == 0 {
 		logger.ErrorPrint(str)
 	}
 	return bt_value.(uint64)
