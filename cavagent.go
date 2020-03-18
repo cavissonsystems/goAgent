@@ -24,10 +24,11 @@ import "C"
 
 import (
 	"context"
-	"log"
+//	"log"
 	"net/http"
-	"os"
+//	"os"
 	"unsafe"
+	logger "goAgent/logger"
 )
 
 func Method_entry(bt uint64, method string) {
@@ -43,6 +44,7 @@ func Method_exit(bt uint64, method string) {
 }
 
 func Sdk_init() {
+	logger.OpenFiles()
 	C.nd_init()
 }
 
@@ -59,11 +61,12 @@ func RequestWithContext(ctx context.Context, req *http.Request) *http.Request {
 	return reqCopy
 }
 
+
 func Start_transacation(name string, req *http.Request) *http.Request {
 	bt := BT_begin(name, "")
+	var str string = "Error: bt returned can't be zero"
 	if bt == 0 {
-		log.Println("Error: bt returned can't be zero")
-		os.Exit(1)
+		logger.ErrorPrint(str)
 	}
 	ctx := req.Context()
 	new_ctx := Updated_context(ctx, bt)
@@ -73,9 +76,9 @@ func Start_transacation(name string, req *http.Request) *http.Request {
 
 func Current_Transaction(ctx context.Context) uint64 {
 	bt_value := ctx.Value("CavissonTx")
+	var str string = "Error: bt returned can't be zero"
 	if bt_value == nil {
-		log.Println("Error : bt returned can't be null")
-		os.Exit(1)
+		logger.ErrorPrint(str)
 	}
 	return bt_value.(uint64)
 }
