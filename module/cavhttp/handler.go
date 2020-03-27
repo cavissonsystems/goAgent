@@ -8,13 +8,13 @@ import (
 )
 
 func m1(bt uint64) {
-        log.Printf("invoke m1 method")
+      log.Printf("invoke m1 method")
 
         nd.Method_entry(bt, "m1")
 
-        log.Println("m1 called")
+       log.Println("m1 called")
 
-        nd.Method_exit(bt, "m1")
+      nd.Method_exit(bt, "m1")
 }
 
 func Wrap(h http.Handler) http.Handler {
@@ -37,7 +37,7 @@ type handler struct {
 }
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	nd.Sdk_init()
+//	nd.Sdk_init()
 
         log.Printf("invoke handle function")
 
@@ -59,5 +59,5 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	h.handler.ServeHTTP(w, req)
 
-	nd.Sdk_free()
+//	nd.Sdk_free()
 }
