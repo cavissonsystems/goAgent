@@ -20,7 +20,7 @@ func NewUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	) (resp interface{}, err error) {
 
                 unique_id :="1"
-                bt_old := nd.BT_begin("server_name", "")
+                bt_old := nd.BT_begin(info.FullMethod, "")
           
                 new_ctx := nd.Updated_context(ctx, bt_old)
                 
@@ -29,7 +29,7 @@ func NewUnaryServerInterceptor() grpc.UnaryServerInterceptor {
                 defer nd.BT_end(bt)
                 nd.BT_store(bt, unique_id)
 
-		resp, err = handler(ctx, req)
+		resp, err = handler(new_ctx, req)
 		return resp, err
 	}
 }

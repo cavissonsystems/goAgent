@@ -7,9 +7,9 @@ import (
 	nd "goAgent"
 	"goAgent/module/cavsql"
 	"log"
-	"time"
-
-	"github.com/go-sql-driver/mysql"
+	"time" 
+        logger "goAgent/logger"
+        "github.com/go-sql-driver/mysql"
 )
 
 type Pet struct {
@@ -27,17 +27,13 @@ var (
 
 func pingAndQueryDB(db *sql.DB, bt uint64,ctx context.Context) {
 	nd.Method_entry(bt, "pingAndQueryDB")
-	fmt.Println("Value of bt from main.go is", bt)
-	{
-		//ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
-	        //ctx, cancel := context.WithCancel(ctx)
-	        //defer cancel()
-
+	//fmt.Println("Value of bt from main.go is", bt)
+{	
 		status := " Connection is up"
 		if err := db.PingContext(ctx); err != nil {
-			status = " connection is down"
+		   logger.ErrorPrint("Error : connection not found")
 		}
-		log.Println(status)
+	fmt.Printf(status)
 	}
 	rows, err := db.QueryContext(ctx,"SELECT * FROM pet")
 	if err != nil {
@@ -87,20 +83,20 @@ func callExample() {
 
 	for i := 0; i < 10; i++ {
 		pingAndQueryDB(db, bt, ctx)
-		time.Sleep(10 * time.Second)
+		time.Sleep(2 * time.Second)
 	}
 
 	nd.Method_exit(bt, "callExample")
 	time.Sleep(5 * time.Second)
 
 	//fmt.Println("Value of bt before bt end is ", bt)
-	nd.BT_end(bt)
-	//fmt.Println("Value of bt end ", bt_end)
+	//nd.BT_end(bt)
+	//fmt.Println("Value of bt end ", bt)
 }
 
 func main() {
 	nd.Sdk_init()
 	callExample()
-	time.Sleep(30 * time.Second)
+	time.Sleep(10 * time.Second)
 	nd.Sdk_free()
 }

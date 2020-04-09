@@ -27,6 +27,6 @@ func NewUnaryClientInterceptor() grpc.UnaryClientInterceptor {
                 defer nd.BT_end(bt)
                 nd.BT_store(bt, unique_id)
 
-		return invoker(ctx, method, req, resp, cc, opts...)
+		return invoker(new_ctx, method, req, resp, cc, opts...)
 	}
 }

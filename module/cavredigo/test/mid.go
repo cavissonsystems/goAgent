@@ -1,11 +1,16 @@
 package main
 
 import (
+	"io"
+	"os"
+	"log"
         "net/http"
         "github.com/labstack/echo"
         "github.com/labstack/echo/middleware"
         md "goAgent/module/cavecho"
 	nd "goAgent"
+	ht "goAgent/module/cavhttp"
+	"context"
 )
 
 
@@ -35,14 +40,47 @@ func m1(bt uint64) {
         nd.Method_exit(bt, "m1")
 }
 
+// cavhttp
+func call_wrapclient(ctx context.Context){
+
+	client := ht.WrapClient(http.DefaultClient)
+
+        req, err := http.NewRequest("GET", "https://www.geeksforgeeks.org/find-triplets-array-whose-sum-equal-zero", nil)
+	if err != nil {
+		log.Println("Error : creating on new request")
+	}
+        req = req.WithContext(ctx)
+
+	resp, err := client.Do(req)
+
+	if err != nil {
+		log.Println("Error : reading response. ")
+	}
+	defer resp.Body.Close()
+
+	/* body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal("Error reading body. ", err)
+	}
+	*/
+
+	// writing the output to a file
+	out, err := os.Create("ResponseBody.txt")
+	if err != nil {
+		log.Println("Error : creating responsebody txt file. ")
+	}
+	defer out.Close()
+	io.Copy(out,resp.Body)
+}
 
 func mainAdmin(c echo.Context)error{
 	req := c.Request()
-
         ctx := req.Context()
 
+        call_wrapclient(ctx)
+     //   Call_redis(ctx)
         bt := ctx.Value("CavissonTx").(uint64)
-
+        Call_redigo(ctx)
         m1(bt)
 
 	return c.String(http.StatusOK,"ID is coming")
@@ -55,9 +93,9 @@ func check1(c echo.Context)error{
 }
 
 func ServerHeader(next echo.HandlerFunc)echo.HandlerFunc{
-      return func (c echo.Context)error{
-                  c.Response().Header().Set(echo.HeaderServer,"BlueBot/1.0")
-                  return next(c)
+      return func(c echo.Context)error{
+         c.Response().Header().Set(echo.HeaderServer,"BlueBot/1.0")
+         return next(c)
 	}
 }
 

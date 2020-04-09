@@ -12,12 +12,13 @@ import (
 func Wrap(h httprouter.Handle, route string) httprouter.Handle {
 
 	return func(w http.ResponseWriter, req *http.Request, p httprouter.Params) {
-                unique_id :="1"
+              unique_id :="1"
                 name := req.URL.Path
                 req = nd.Start_transacation(name,req)
                 bt := nd.Current_Transaction(req.Context())
                 defer nd.BT_end(bt)
                 nd.BT_store(bt, unique_id)
+       
                 h(w, req, p)
 	}
 }

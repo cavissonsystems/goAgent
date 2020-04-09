@@ -1,6 +1,5 @@
 package cavgoredis
 import (
-	"fmt"
 	"github.com/go-redis/redis"
 	nd "goAgent"
 	"context"
@@ -10,22 +9,12 @@ import (
 type Client interface {
 	redis.UniversalClient
 
-	// Client() returns the wrapped *redis.Client,
-	// or nil if a non-normal client is wrapped
 	RedisClient() *redis.Client
 
-	// ClusterClient returns the wrapped *redis.ClusterClient,
-	// or nil if a non-cluster client is wrapped.
 	Cluster() *redis.ClusterClient
 
-	// Ring returns the wrapped *redis.Ring,
-	// or nil if a non-ring client is wrapped.
 	RingClient() *redis.Ring
 
-	// WithContext returns a shallow copy of the client with
-	// its context changed to ctx and will add instrumentation
-	// with client.WrapProcess and client.WrapProcessPipeline
-	// To report commands as spans, ctx must contain a transaction or span.
 	WithContext(ctx context.Context) Client
 }
 
@@ -121,7 +110,6 @@ func (c contextRingClient) WithContext(ctx context.Context) Client {
 func process(ctx context.Context) func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
 	return func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
 		return func(cmd redis.Cmder) error {
-			fmt.Printf("\n",cmd.Name())
                         bt := ctx.Value("CavissonTx").(uint64)
                         db_handle :=  nd.IP_db_callout_begin(bt ,"db.redis", cmd.Name())
                         defer nd.IP_db_callout_end(bt , db_handle)

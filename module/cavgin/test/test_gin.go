@@ -1,7 +1,6 @@
 package main
 
 import(
-    "fmt"
     "github.com/gin-gonic/gin"
     "time"
     "log"
@@ -9,6 +8,7 @@ import(
     md  "goAgent/module/cavgin"
     "strconv"
     "github.com/phayes/freeport"
+    logger "goAgent/logger"
 )
 
 func Logger() gin.HandlerFunc {
@@ -27,31 +27,25 @@ func Logger() gin.HandlerFunc {
 
        status := c.Writer.Status()
 
-       log.Println(status)
+       logger.TracePrint(strconv.Itoa(status))
     }
 }
 
 func DummyMiddleware(c *gin.Context) {
-
-     fmt.Println("Im a dummy!")
 
      c.Next()
 }
 
 func method_check(bt uint64) {
 
-     log.Println("m1 called")
+     nd.Method_entry(bt, "method_check")
 
-     nd.Method_entry(bt, "m1")
-
-     nd.Method_exit(bt, "m1")
+     nd.Method_exit(bt, "method_check")
 }
 
 
 
 func MainAdmin(c *gin.Context) {
-
-     log.Println("MainAdmin called")
 
      ctx:=c.Request.Context()
 
@@ -86,8 +80,6 @@ func main() {
 
      nd.Sdk_init()
 
-     fmt.Println("hey")
-
      r := gin.New()
 
      r.Use(Logger())
@@ -100,8 +92,8 @@ func main() {
 
           example := c.MustGet("example").(string)
 
-          log.Println(example)
-     })
+             logger.TracePrint(example)
+})
 
      r.GET("/cat",cat_querry)
 
@@ -111,11 +103,10 @@ func main() {
 
         if err != nil {
 
-                log.Fatal(err)
 
         }
 
-     fmt.Println(strconv.Itoa(port))
+     logger.TracePrint(strconv.Itoa(port))
 
      r.Run(":" + strconv.Itoa(port))
 

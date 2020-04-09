@@ -2,8 +2,8 @@ package main
 
 import (
     "context"
-    "fmt"
-    "log"
+   logger "goAgent/logger"
+   "log"
     "goAgent/module/cavmongo"
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/mongo"
@@ -20,14 +20,13 @@ type Trainer struct {
 func Call_mongo(ctx context.Context) {
 
 
-    // Rest of the code will go here
    // Set client options
 clientOptions := options.Client().ApplyURI("mongodb://localhost:27017").SetMonitor(cavmongo.CommandMonitor())
 // Connect to MongoDB
 client, err := mongo.Connect(ctx, clientOptions)
 
 if err != nil {
-    fmt.Println("error come from client")
+    logger.ErrorPrint("error come from client")
     log.Fatal(err)
 }
 
@@ -36,10 +35,10 @@ err = client.Ping(ctx, nil)
 
 if err != nil {
     
-    log.Println("Error : come from Ping")
+    logger.ErrorPrint("Error : come from Ping")
 }
 
-fmt.Println("Connected to MongoDB!")
+logger.TracePrint("Connected to MongoDB!")
 
 collection := client.Database("test").Collection("trainers")
 
@@ -50,9 +49,8 @@ if err != nil {
     log.Fatal(err)
 }
 
-fmt.Println("Inserted a single document: ", insertResult.InsertedID)
-
-// create a value into which the result can be decoded
+//logger.TracePrint("Inserted a single document: ", insertResult.InsertedID)
+log.Println("Inserted a single document: ", insertResult.InsertedID)
 filter := bson.D{{"name", "Ash"}}
 
 var result Trainer
@@ -62,6 +60,6 @@ if err != nil {
     log.Fatal(err)
 }
 
-fmt.Printf("Found a single document:%+v ", result)
-
+//logger.TracePrint("Found a single document:%+v ", result)
+log.Println("Found a single document:%+v ", result)
 }

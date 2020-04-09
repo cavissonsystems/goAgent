@@ -2,10 +2,9 @@ package cavecho
 
 import (
 	nd "goAgent"
-	"log"
 	"net/http"
-
 	"github.com/labstack/echo"
+        logger "goAgent/logger"
 )
 
 func Middleware() echo.MiddlewareFunc {
@@ -27,14 +26,14 @@ func (m *middleware) handle(c echo.Context) error {
 	req := c.Request()
 
 	if req == nil {
-		log.Printf("Error: req is not found")
-	}
+           logger.ErrorPrint("Error : request not found")
+        }
 
 	name := c.Path()
 
 	if name == "" {
-		log.Printf("Error: path is not found")
-	}
+           logger.ErrorPrint("Error : name not found")
+        }
 
 	req = nd.Start_transacation(name, req)
 

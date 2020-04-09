@@ -9,7 +9,6 @@ func newStmt(in driver.Stmt, conn *conn, query string) driver.Stmt {
 	stmt := &stmt{
 		Stmt: in,
 		conn: conn,
-		//	signature: conn.driver.querySignature(query),
 		query: query,
 	}
 	stmt.columnConverter, _ = in.(driver.ColumnConverter)
@@ -34,10 +33,6 @@ type stmt struct {
 	stmtQueryContext  driver.StmtQueryContext
 }
 
-// func (s *stmt) startSpan(ctx context.Context, spanType string) (*apm.Span, context.Context) {
-//	return s.conn.startSpan(ctx, s.signature, spanType, s.query)
-// }
-
 func (s *stmt) ColumnConverter(idx int) driver.ValueConverter {
 	if s.columnConverter != nil {
 		return s.columnConverter.ColumnConverter(idx)
@@ -46,8 +41,6 @@ func (s *stmt) ColumnConverter(idx int) driver.ValueConverter {
 }
 
 func (s *stmt) ExecContext(ctx context.Context, args []driver.NamedValue) (result driver.Result, resultError error) {
-	//	span, ctx := s.startSpan(ctx, s.conn.driver.execSpanType)
-	//	defer s.conn.finishSpan(ctx, span, &result, &resultError)
 	if s.stmtExecContext != nil {
 		return s.stmtExecContext.ExecContext(ctx, args)
 	}
@@ -64,8 +57,6 @@ func (s *stmt) ExecContext(ctx context.Context, args []driver.NamedValue) (resul
 }
 
 func (s *stmt) QueryContext(ctx context.Context, args []driver.NamedValue) (_ driver.Rows, resultError error) {
-	//span, ctx := s.startSpan(ctx, s.conn.driver.querySpanType)
-	//defer s.conn.finishSpan(ctx, span, nil, &resultError)
 	if s.stmtQueryContext != nil {
 		return s.stmtQueryContext.QueryContext(ctx, args)
 	}

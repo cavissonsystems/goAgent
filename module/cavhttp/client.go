@@ -35,6 +35,6 @@ func (r *roundTripper) RoundTrip(req *http.Request) (*http.Response, error){
 	bt := ctx.Value("CavissonTx").(uint64)
 	ip_handle_int := nd.IP_http_callout_begin(bt , req.Host, req.URL.Path)
         resp, err := r.r.RoundTrip(req)
-        nd.IP_http_callout_end(bt ,  ip_handle_int)
+       defer nd.IP_http_callout_end(bt ,  ip_handle_int)
 	return resp, err
 }

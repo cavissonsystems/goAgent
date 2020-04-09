@@ -6,6 +6,7 @@ import (
 	"errors"
          "fmt"
 	nd "goAgent"
+       logger "goAgent/logger"
 )
 
 func newConn(in driver.Conn, d *tracingDriver, dsnInfo DSNInfo) driver.Conn {
@@ -63,22 +64,16 @@ func checkNamedValue(nv *driver.NamedValue, next namedValueChecker) error {
 }
 
 func (c *conn) Ping(ctx context.Context) (resultError error) {
-//	fmt.Printf("conn.go(ping) here it is printing\n")
       if c.pinger == nil {
-	   return nil
+	    logger.ErrorPrint("Error : request not found")
 	}
-//	bt := ctx.Value("CavissonTx").(uint64)
-//	fmt.Println(bt)
-//	handle := nd.IP_db_callout_begin(bt, "db_host", "query")
-//	fmt.Println(handle)
-	//defer nd.IP_db_callout_end(bt, handle)
 	return c.pinger.Ping(ctx)
 }
 
 func (c *conn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (_ driver.Rows, resultError error) {
        fmt.Println("query context")
 	if c.queryerContext == nil && c.queryer == nil {
-	   return nil, driver.ErrSkip
+	  return nil, driver.ErrSkip
 	}
 	bt := ctx.Value("CavissonTx").(uint64)
         fmt.Println(bt)
