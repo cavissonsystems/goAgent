@@ -45,7 +45,7 @@ func (m *middleware) handle(c echo.Context) error {
 
 	nd.BT_store(bt, unique_id)
 
-	resp := c.Response()
+        resp := c.Response()
 
 	var handlerErr error
 

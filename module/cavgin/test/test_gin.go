@@ -11,23 +11,70 @@ import(
     logger "goAgent/logger"
 )
 
+
+
+func method_check1(bt uint64) {
+
+     nd.Method_entry(bt, "a.b.method_check1")
+
+     nd.Method_exit(bt, "a.b.method_check1")
+}
+
+func method_check2(bt uint64) {
+
+     nd.Method_entry(bt, "a.b.method_check2")
+
+     nd.Method_exit(bt, "a.b.method_check2")
+}
+
+func method_check3(bt uint64) {
+
+     nd.Method_entry(bt, "a.b.method_check3")
+
+     nd.Method_exit(bt, "a.b.method_check3")
+}
+
+func method_check4(bt uint64) {
+
+     nd.Method_entry(bt, "a.b.method_check4")
+
+     nd.Method_exit(bt, "a.b.method_check4")
+}
+
+func method_check5(bt uint64) {
+
+     nd.Method_entry(bt, "a.b.method_check5")
+
+     nd.Method_exit(bt, "a.b.method_check5")
+}
+
+func method_check6(bt uint64) {
+
+     nd.Method_entry(bt, "a.b.method_check6")
+
+     nd.Method_exit(bt, "a.b.method_check6")
+}
+
+
+
+
 func Logger() gin.HandlerFunc {
 
     return func(c *gin.Context) {
 
-       t := time.Now()
+              t := time.Now()
 
-       c.Set("example", "12345")
+              c.Set("example", "12345")
 
-       c.Next()
+              c.Next()
 
-       latency := time.Since(t)
+              latency := time.Since(t)
 
-       log.Println(latency)
+              log.Println(latency)
 
-       status := c.Writer.Status()
+              status := c.Writer.Status()
 
-       logger.TracePrint(strconv.Itoa(status))
+              logger.TracePrint(strconv.Itoa(status))
     }
 }
 
@@ -36,22 +83,16 @@ func DummyMiddleware(c *gin.Context) {
      c.Next()
 }
 
-func method_check(bt uint64) {
 
-     nd.Method_entry(bt, "method_check")
-
-     nd.Method_exit(bt, "method_check")
-}
-
-
-
-func MainAdmin(c *gin.Context) {
+func method_cavisson(c *gin.Context) {
 
      ctx:=c.Request.Context()
 
      bt := ctx.Value("CavissonTx").(uint64)
 
-     method_check(bt)
+     method_check1(bt)
+
+     method_check2(bt)
 
      c.JSON(200, gin.H{
 
@@ -61,7 +102,7 @@ func MainAdmin(c *gin.Context) {
 
 }
 
-func cat_querry(c *gin.Context){
+func method_root(c *gin.Context){
 
      name:=c.Query("name")
 
@@ -73,8 +114,31 @@ func cat_querry(c *gin.Context){
       "age": age,
 
      })
+
+     ctx:=c.Request.Context()
+
+     bt := ctx.Value("CavissonTx").(uint64)
+
+     method_check3(bt)
+
+     method_check4(bt)
+
 }
 
+func  method_test(c *gin.Context) {
+
+     ctx:=c.Request.Context()
+
+     bt := ctx.Value("CavissonTx").(uint64)
+
+     method_check5(bt)
+
+     method_check6(bt)
+
+     example := c.MustGet("example").(string)
+
+     logger.TracePrint(example)
+}
 
 func main() {
 
@@ -88,28 +152,24 @@ func main() {
 
      r.Use(md.Middleware(r))
 
-     r.GET("/test", func(c *gin.Context) {
+     r.GET("/test",method_test)
 
-          example := c.MustGet("example").(string)
+     r.GET("/root",method_root)
 
-             logger.TracePrint(example)
-})
-
-     r.GET("/cat",cat_querry)
-
-     r.GET("/",MainAdmin)
+     r.GET("/cavisson",method_cavisson)
 
      port, err := freeport.GetFreePort()
 
-        if err != nil {
+     if err != nil {
 
 
         }
 
      logger.TracePrint(strconv.Itoa(port))
 
+     defer nd.Sdk_free()
+
      r.Run(":" + strconv.Itoa(port))
 
-     nd.Sdk_free()
 
 }

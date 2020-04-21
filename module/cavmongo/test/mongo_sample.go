@@ -8,7 +8,21 @@ import (
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/mongo"
     "go.mongodb.org/mongo-driver/mongo/options"
+    nd "goAgent"
+    "time"
 )
+
+func m3(bt uint64) {
+        nd.Method_entry(bt, "a.b.m3")
+        time.Sleep(2*time.Millisecond)
+        nd.Method_exit(bt, "a.b.m3")
+}
+
+func m2(bt uint64) {
+        nd.Method_entry(bt, "a.b.m2")
+        time.Sleep(2*time.Millisecond)
+        nd.Method_exit(bt, "a.b.m2")
+}
 
 // You will be using this Trainer type later in the program
 type Trainer struct {
@@ -62,4 +76,10 @@ if err != nil {
 
 //logger.TracePrint("Found a single document:%+v ", result)
 log.Println("Found a single document:%+v ", result)
+
+bt := ctx.Value("CavissonTx").(uint64)
+
+m2(bt)
+
+m3(bt)
 }

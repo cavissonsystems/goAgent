@@ -3,7 +3,6 @@ package cavhttprouter
 import (
 	"context"
 	"net/http"
-
 	"github.com/julienschmidt/httprouter"
 )
 

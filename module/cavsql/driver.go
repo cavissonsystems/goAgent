@@ -5,6 +5,9 @@ import (
 	"database/sql/driver"
 	"goAgent/internal/sqlutil"
 	"sync"
+/*"context"
+"fmt"
+ nd "goAgent"*/
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -50,7 +53,7 @@ func newTracingDriver(driver driver.Driver, opts ...WrapOption) *tracingDriver {
 
 func DriverDSNParser(driverName string) DSNParserFunc {
 	driversMu.RLock()
-	driver := drivers[driverName]
+        driver := drivers[driverName]
 	defer driversMu.RUnlock()
 
 	if driver == nil {

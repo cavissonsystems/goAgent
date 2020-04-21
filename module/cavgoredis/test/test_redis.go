@@ -4,9 +4,23 @@ import(
         "context"
         "github.com/go-redis/redis"
         "goAgent/module/cavgoredis"
-      logger  "goAgent/logger"
-       "log"
+        logger  "goAgent/logger"
+        "log"
+        nd "goAgent"
+        "time"
 )
+
+func m3(bt uint64) {
+        nd.Method_entry(bt, "a.b.m3")
+        time.Sleep(2*time.Millisecond)
+        nd.Method_exit(bt, "a.b.m3")
+}
+
+func m4(bt uint64) {
+        nd.Method_entry(bt, "a.b.m4")
+        time.Sleep(2*time.Millisecond)
+        nd.Method_exit(bt, "a.b.m4")
+}
 
 
 const (
@@ -43,6 +57,9 @@ func Call_redis(ctx context.Context) {
 	keys = append(keys, "bar")
 	sc := client1.MGet(keys...)
         log.Println(sc)
+        bt := ctx.Value("CavissonTx").(uint64)
+        m3(bt)
+        m4(bt)
 }
 
 func redisEmptyClient() *redis.Client {
