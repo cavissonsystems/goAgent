@@ -11,6 +11,7 @@ import (
 	nd "goAgent"
 	ht "goAgent/module/cavhttp"
 	"context"
+        "time"
 )
 
 
@@ -36,8 +37,9 @@ func save2(c echo.Context) error {
 }
 
 func m1(bt uint64) {
-        nd.Method_entry(bt, "m1")
-        nd.Method_exit(bt, "m1")
+        nd.Method_entry(bt, "a.b.m1")
+       time.Sleep(2*time.Millisecond)
+        nd.Method_exit(bt, "a.b.m1")
 }
 
 // cavhttp

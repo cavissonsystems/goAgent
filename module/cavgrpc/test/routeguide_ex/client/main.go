@@ -10,23 +10,8 @@ import (
         "goAgent/module/cavgrpc"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
-       logger "goAgent/logger"
 )
 
-/*func m1(bt uint64) {
-        nd.Method_entry(bt, "m1")
-        logger.TracePrint("m1 called")    
-        fmt.Println("m1 called") 
-        nd.Method_exit(bt, "m1")
-}
-
-func m2(bt uint64) {
-        nd.Method_entry(bt, "m2")
-        logger.TracePrint("m2 called")    
-        fmt.Println("m2 called") 
-        nd.Method_exit(bt, "m2")
-}
-*/
 
                      
 func main() {
@@ -93,7 +78,6 @@ func main() {
          
       
         })
-        log.Println("server run at 4041")
         if err := g.Run(":4041"); err != nil {
                 log.Fatalf("Failed to run server: %v", err)
         }

@@ -5,7 +5,22 @@ import (
         "goAgent/module/cavredigo"
 	"github.com/gomodule/redigo/redis"
        "context"
+      nd "goAgent"
+        "time"
 )
+
+func m3(bt uint64) {
+        nd.Method_entry(bt, "a.b.m3")
+        time.Sleep(2*time.Millisecond)
+        nd.Method_exit(bt, "a.b.m3")
+}
+
+func m2(bt uint64) {
+        nd.Method_entry(bt, "a.b.m2")
+        time.Sleep(2*time.Millisecond)
+        nd.Method_exit(bt, "a.b.m2")
+}
+
 
 func Call_redigo(ctx context.Context) {
 
@@ -66,7 +81,9 @@ func Call_redigo(ctx context.Context) {
                 log.Fatal(err)
         }
 
-
+        bt  :=  ctx.Value("CavissonTx").(uint64)
+        m2(bt)
+        m3(bt)
 	log.Printf("%s by %s: £%.2f [%d likes]\n", title, artist, price, likes)
         log.Printf("%s by %s: £%.2f [%d likes]\n", title2, artist2, price2, likes2)
 }

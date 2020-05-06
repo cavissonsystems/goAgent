@@ -7,20 +7,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Open returns a *gorm.DB for the given dialect and arguments.
-// The returned *gorm.DB will have callbacks registered with
-// RegisterCallbacks, such that CRUD operations will be reported
-// as spans.
-//
-// Open accepts the following signatures:
-//  - a datasource name (i.e. the second argument to sql.Open)
-//  - a driver name and a datasource name
-//  - a *sql.DB, or some other type with the same interface
-//
-// If a driver and datasource name are supplied, and the appropriate
-// apmgorm/dialects package has been imported (or the driver has
-// otherwise been registered with apmsql), then the datasource name
-// will be parsed for inclusion in the span context.
 func Open(dialect string, args ...interface{}) (*gorm.DB, error) {
 	var driverName, dsn string
 	switch len(args) {

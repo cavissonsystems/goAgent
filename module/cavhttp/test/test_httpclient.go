@@ -11,13 +11,15 @@ import (
 	ht "goAgent/module/cavhttp"
 	"context"
         logger "goAgent/logger"
+        "time"
 )
 
 
 func m1(bt uint64) {
+        nd.Method_entry(bt, "a.b.m1")
+        time.Sleep(2*time.Millisecond)
         logger.TracePrint("invoke methd m1")
-        nd.Method_entry(bt, "m1")
-        nd.Method_exit(bt, "m1")
+        nd.Method_exit(bt, "a.b.m1")
 }
 
 // cavhttp
@@ -99,6 +101,6 @@ func main(){
 	}))
 	g.GET("/main",mainAdmin)
         g.GET("/hero",check1)
+        defer nd.Sdk_free()
 	e.Start(":0000")
-	nd.Sdk_free()
 }
