@@ -16,7 +16,6 @@ func Wrap(h http.Handler) http.Handler {
 
 		handler:        h,
 	}
-
 	return handler
 }
 
@@ -39,5 +38,4 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
         nd.BT_store(bt,unique_id)
 
 	h.handler.ServeHTTP(w, req)
-                                            
 }

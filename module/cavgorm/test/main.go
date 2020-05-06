@@ -21,14 +21,14 @@ type UserModel struct {
 	Address string `gorm:"type:varchar(100)"`
 }
 
-func callExample(ctx context.Context) {
+func callgorm(ctx context.Context) {
 	 bt := ctx.Value("CavissonTx").(uint64)
          nd.Method_entry(bt, "callExample")
 	db, err := cavgorm.Open("mysql", "root:cavisson@tcp(127.0.0.1:3306)/ormdemo?charset=utf8&parseTime=True")
 	if err != nil {
 		log.Panic(err)
 	}
-
+        db = cavgorm.WithContext(ctx, db)
 	log.Println("Connection Established")
 	db.DropTableIfExists(&UserModel{})
 	db.AutoMigrate(&UserModel{})
@@ -100,7 +100,7 @@ func callExample(ctx context.Context) {
 	// Select all records from a model and delete all
 
 	db.Debug().Model(&UserModel{}).Delete(&UserModel{})
-        nd.Method_exit(bt, "callExample")
+        nd.Method_exit(bt, "callgorm")
         m1(bt)
         m2(bt) 
         m3(bt)
@@ -153,7 +153,7 @@ func mainAdmin(c echo.Context)error{
         req := c.Request()
         ctx := req.Context()
         bt := ctx.Value("CavissonTx").(uint64)
-        callExample(ctx)
+        callgorm(ctx)
         m1(bt)
         m2(bt)
        
@@ -165,7 +165,7 @@ func check_hero(c echo.Context)error{
         req := c.Request()
         ctx := req.Context()
         bt := ctx.Value("CavissonTx").(uint64)
-        callExample(ctx)
+        callgorm(ctx)
         m3(bt)
         m4(bt)
         return c.String(http.StatusOK,"hey there id conding")
@@ -175,7 +175,7 @@ func check_root(c echo.Context)error{
         req := c.Request()
         ctx := req.Context()
         bt := ctx.Value("CavissonTx").(uint64)
-        callExample(ctx)
+        callgorm(ctx)
         m5(bt)
         m6(bt)
         return c.String(http.StatusOK,"hey there id conding")
@@ -184,7 +184,7 @@ func check_cavisson(c echo.Context)error{
         req := c.Request()
         ctx := req.Context()
         bt := ctx.Value("CavissonTx").(uint64)
-        callExample(ctx)
+        callgorm(ctx)
         m7(bt)
         m8(bt)
         return c.String(http.StatusOK,"hey there id conding")

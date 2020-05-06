@@ -6,7 +6,6 @@ import (
         "github.com/labstack/echo/middleware"
         md "goAgent/module/cavecho"
 	nd "goAgent"
-	"fmt"
 )
 
 func m1(bt uint64) {

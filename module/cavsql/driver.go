@@ -5,10 +5,6 @@ import (
 	"database/sql/driver"
 	"goAgent/internal/sqlutil"
 	"sync"
-/*"context"
-"fmt"
- nd "goAgent"*/
-
 	_ "github.com/go-sql-driver/mysql"
 )
 
