@@ -24,7 +24,11 @@ type UserModel struct {
 func callgorm(ctx context.Context) {
 	 bt := ctx.Value("CavissonTx").(uint64)
          nd.Method_entry(bt, "callExample")
+<<<<<<< HEAD
 	db, err := cavgorm.Open("mysql", "root:cavisson@/ormdemo")
+=======
+	db, err := cavgorm.Open("mysql", "root:cavisson@tcp(127.0.0.1:3306)/ormdemo?charset=utf8&parseTime=True")
+>>>>>>> 83364ee12299b7fc92d14c26331a21466b5ef90a
 	if err != nil {
 		log.Panic(err)
 	}
@@ -75,6 +79,11 @@ func callgorm(ctx context.Context) {
 
 	db.Where("address=?", "Los Angeles").Delete(&UserModel{})
 
+<<<<<<< HEAD
+=======
+	// Select all records from a model and delete all
+
+>>>>>>> 83364ee12299b7fc92d14c26331a21466b5ef90a
 	db.Debug().Model(&UserModel{}).Delete(&UserModel{})
         nd.Method_exit(bt, "callgorm")
         m1(bt)
@@ -92,6 +101,7 @@ func callgorm(ctx context.Context) {
 func m1(bt uint64) {
         nd.Method_entry(bt, "a.b.m1")
         nd.Method_exit(bt, "a.b.m1")
+<<<<<<< HEAD
 }
 
 func m2(bt uint64) {
@@ -99,6 +109,15 @@ func m2(bt uint64) {
         nd.Method_exit(bt, "a.b.m2")
 }
 
+=======
+}
+
+func m2(bt uint64) {
+        nd.Method_entry(bt, "a.b.m2")
+        nd.Method_exit(bt, "a.b.m2")
+}
+
+>>>>>>> 83364ee12299b7fc92d14c26331a21466b5ef90a
 func m3(bt uint64) {
         nd.Method_entry(bt, "a.b.m3")
         nd.Method_exit(bt, "a.b.m3")
