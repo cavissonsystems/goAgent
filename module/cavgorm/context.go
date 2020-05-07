@@ -33,20 +33,6 @@ func RegisterCallbacks(db *gorm.DB) {
 	registerCallbacks(db, cavsql.DSNInfo{})
 }
 
-/*type DSNInfo struct {
-	// Address is the database server address specified by the DSN.
-	Address string
-
-	// Port is the database server port specified by the DSN.
-	Port int
-
-	// Database is the name of the specific database identified by the DSN.
-	Database string
-
-	// User is the username that the DSN specifies for authenticating the
-	// database connection.
-	User string
-}*/
 
 func registerCallbacks(db *gorm.DB, dsnInfo cavsql.DSNInfo) {
 	driverName := db.Dialect().GetName()

@@ -24,7 +24,7 @@ type UserModel struct {
 func callgorm(ctx context.Context) {
 	 bt := ctx.Value("CavissonTx").(uint64)
          nd.Method_entry(bt, "callExample")
-	db, err := cavgorm.Open("mysql", "root:cavisson@tcp(127.0.0.1:3306)/ormdemo?charset=utf8&parseTime=True")
+	db, err := cavgorm.Open("mysql", "root:cavisson@/ormdemo")
 	if err != nil {
 		log.Panic(err)
 	}
@@ -35,25 +35,14 @@ func callgorm(ctx context.Context) {
 
 	user := &UserModel{Name: "John", Address: "New York"}
 	newUser := &UserModel{Name: "Martin", Address: "Los Angeles"}
-
-	//****To insert or create the record in the database****.
-	//NOTE: ##"we can insert multiple records here##".
 	db.Debug().Create(user)
 	fmt.Println("User Successfully Created")
-	//**Also we can use save that will return primary key**
 	db.Debug().Save(newUser)
 	fmt.Println("New User Successfully Created")
-
-	// "We can Update Record from here"
 	db.Debug().Find(&user).Update("address", "California")
-	//It will update John's address to California
-
-	// Select, edit, and save
 	db.Debug().Find(&user)
 	user.Address = "Brisbane"
 	db.Debug().Save(&user)
-
-	//**Update with column names, not with attribute names**
 	db.Debug().Model(&user).Update("Name", "Jack")
 
 	db.Debug().Model(&user).Updates(
@@ -62,42 +51,29 @@ func callgorm(ctx context.Context) {
 			"Address": "Boston",
 		})
 
-	// UpdateColumn()
 	db.Debug().Model(&user).UpdateColumn("Address", "Phoenix")
 	db.Debug().Model(&user).UpdateColumns(
 		map[string]interface{}{
 			"Name":    "Taylor",
 			"Address": "Houston",
 		})
-	// Using Find()
 	db.Debug().Find(&user).Update("Address", "San Diego")
-
-	// Batch Update
 	db.Debug().Table("user_models").Where("address = ?", "california").Update("name", "Walker")
-
-	// Select records and delete it
 	db.Debug().Table("user_models").Where("address= ?", "San Diego").Delete(&UserModel{})
-
 	db.Debug().Where("address = ?", "Los Angeles").First(&user)
 	log.Println(user)
 	db.Debug().Where("address = ?", "Los Angeles").Find(&user)
 	log.Println(user)
 	db.Debug().Where("address <> ?", "New York").Find(&user)
 	log.Println(user)
-	// IN
 	db.Debug().Where("name in (?)", []string{"John", "Martin"}).Find(&user)
 	log.Println(user)
-	// LIKE
 	db.Debug().Where("name LIKE ?", "%ti%").Find(&user)
 	log.Println(user)
-	// AND
 	db.Debug().Where("name = ? AND address >= ?", "Martin", "Los Angeles").Find(&user)
 	log.Println(user)
 
-	//Find the record and delete it
 	db.Where("address=?", "Los Angeles").Delete(&UserModel{})
-
-	// Select all records from a model and delete all
 
 	db.Debug().Model(&UserModel{}).Delete(&UserModel{})
         nd.Method_exit(bt, "callgorm")
