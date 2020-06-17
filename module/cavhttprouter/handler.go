@@ -6,6 +6,8 @@ import (
 	"github.com/julienschmidt/httprouter"
         nd  "goAgent"
 	"goAgent/module/cavhttp"
+  logger "goAgent/logger"
+
 )
 
 
@@ -25,6 +27,8 @@ func Wrap(h httprouter.Handle, route string) httprouter.Handle {
 
 func WrapNotFoundHandler(h http.Handler) http.Handler {
 	if h == nil {
+                logger.ErrorPrint("Error : Handler not found")
+
 		h = http.NotFoundHandler()
 	}
 	return wrapHandlerUnknownRoute(h)
@@ -32,6 +36,7 @@ func WrapNotFoundHandler(h http.Handler) http.Handler {
 
 func WrapMethodNotAllowedHandler(h http.Handler) http.Handler {
 	if h == nil {
+                logger.ErrorPrint("Error : method not found")
 		h = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		})

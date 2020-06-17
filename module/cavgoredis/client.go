@@ -4,6 +4,8 @@ import (
 	nd "goAgent"
 	"context"
 	"strings"
+ logger "goAgent/logger"
+
 )
 
 type Client interface {
@@ -124,6 +126,8 @@ func processPipeline(ctx context.Context) func(oldProcess func(cmds []redis.Cmde
 				cmdName := strings.ToUpper(cmds[i-1].Name())
 				if cmdName == "" {
 					cmdName = "(empty command)"
+                                        logger.ErrorPrint("Error : command not found")
+
 				}
 
                                 bt := ctx.Value("CavissonTx").(uint64)

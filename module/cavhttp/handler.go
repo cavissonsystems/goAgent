@@ -3,6 +3,8 @@ package cavhttp
 import (
 	"net/http"
         nd "goAgent"
+ logger "goAgent/logger"
+
 )
 
 
@@ -10,6 +12,8 @@ import (
 func Wrap(h http.Handler) http.Handler {
 	if h == nil {
 		panic("h == nil")
+                logger.ErrorPrint("Error : handler not found")
+
 	}
 
 	handler := &handler{
