@@ -3,31 +3,31 @@ package main
 import (
 	"fmt"
 	"time"
-
+	logger "goAgent/logger"
 	nd "goAgent"
 )
 
 func m1(bt uint64) {
 	nd.Method_entry(bt, "m1")
-	fmt.Println("m1 called")
+	logger.TracePrint("m1 called")
 	nd.Method_exit(bt, "m1")
 }
 
 func m2(bt uint64) {
 	nd.Method_entry(bt, "m2")
-	fmt.Println("m2 called")
+	logger.TracePrint("m2 called")
 	nd.Method_exit(bt, "m2")
 }
 
 func m3(bt uint64) {
 	nd.Method_entry(bt, "m3")
-	fmt.Println("m3 called")
+	logger.TracePrint("m3 called")
 	nd.Method_exit(bt, "m3")
 }
 
 func m4(bt uint64) {
 	nd.Method_entry(bt, "m4")
-	fmt.Println("m4 called")
+	logger.TracePrint("m4 called")
 	nd.Method_exit(bt, "m4")
 }
 
