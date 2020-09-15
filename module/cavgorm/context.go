@@ -33,8 +33,6 @@ func RegisterCallbacks(db *gorm.DB) {
 	registerCallbacks(db, cavsql.DSNInfo{})
 }
 
-<<<<<<< HEAD
-=======
 /*type DSNInfo struct {
 	// Address is the database server address specified by the DSN.
 	Address string
@@ -49,7 +47,6 @@ func RegisterCallbacks(db *gorm.DB) {
 	// database connection.
 	User string
 }*/
->>>>>>> 83364ee12299b7fc92d14c26331a21466b5ef90a
 
 func registerCallbacks(db *gorm.DB, dsnInfo cavsql.DSNInfo) {
 	driverName := db.Dialect().GetName()
@@ -101,7 +98,7 @@ func registerCallbacks(db *gorm.DB, dsnInfo cavsql.DSNInfo) {
 
 }
 
-//dbcallout begin
+// dbcallout begin
 func newBeforeCallback(spanType string) func(*gorm.Scope) {
 	return func(scope *gorm.Scope) {
 		ctx, ok := scopeContext(scope)
@@ -115,17 +112,17 @@ func newBeforeCallback(spanType string) func(*gorm.Scope) {
 	}
 }
 
-//dbcallout end
+// dbcallout end
 func newAfterCallback(dsnInfo cavsql.DSNInfo) func(*gorm.Scope) {
 	return func(scope *gorm.Scope) {
-		
+
 		defer nd.IP_db_callout_end(bt, handle)
 
 		for _, err := range scope.DB().GetErrors() {
 			if gorm.IsRecordNotFoundError(err) || err == sql.ErrNoRows {
 				continue
 			}
-		
+
 		}
 	}
 }

@@ -1,18 +1,17 @@
 package main
 
 import (
-	"net/http"
-        "github.com/labstack/echo"
-        "github.com/labstack/echo/middleware"
-        md "goAgent/module/cavecho"
-        "context"
+	"context"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	nd "goAgent"
+	md "goAgent/module/cavecho"
 	"goAgent/module/cavgorm"
 	"log"
-	
-      _ "github.com/go-sql-driver/mysql"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"net/http"
 )
 
 type UserModel struct {
@@ -22,17 +21,14 @@ type UserModel struct {
 }
 
 func callgorm(ctx context.Context) {
-	 bt := ctx.Value("CavissonTx").(uint64)
-         nd.Method_entry(bt, "callExample")
-<<<<<<< HEAD
+	bt := ctx.Value("CavissonTx").(uint64)
+	nd.Method_entry(bt, "callExample")
 	db, err := cavgorm.Open("mysql", "root:cavisson@/ormdemo")
-=======
 	db, err := cavgorm.Open("mysql", "root:cavisson@tcp(127.0.0.1:3306)/ormdemo?charset=utf8&parseTime=True")
->>>>>>> 83364ee12299b7fc92d14c26331a21466b5ef90a
 	if err != nil {
 		log.Panic(err)
 	}
-        db = cavgorm.WithContext(ctx, db)
+	db = cavgorm.WithContext(ctx, db)
 	log.Println("Connection Established")
 	db.DropTableIfExists(&UserModel{})
 	db.AutoMigrate(&UserModel{})
@@ -79,131 +75,123 @@ func callgorm(ctx context.Context) {
 
 	db.Where("address=?", "Los Angeles").Delete(&UserModel{})
 
-<<<<<<< HEAD
-=======
 	// Select all records from a model and delete all
 
->>>>>>> 83364ee12299b7fc92d14c26331a21466b5ef90a
 	db.Debug().Model(&UserModel{}).Delete(&UserModel{})
-        nd.Method_exit(bt, "callgorm")
-        m1(bt)
-        m2(bt) 
-        m3(bt)
-        m4(bt)
-        m5(bt)
-        m6(bt)
-        m7(bt)
-        m8(bt)
+	nd.Method_exit(bt, "callgorm")
+	m1(bt)
+	m2(bt)
+	m3(bt)
+	m4(bt)
+	m5(bt)
+	m6(bt)
+	m7(bt)
+	m8(bt)
 
-        nd.BT_end(bt)
- 
+	nd.BT_end(bt)
+
 }
 func m1(bt uint64) {
-        nd.Method_entry(bt, "a.b.m1")
-        nd.Method_exit(bt, "a.b.m1")
-<<<<<<< HEAD
+	nd.Method_entry(bt, "a.b.m1")
+	nd.Method_exit(bt, "a.b.m1")
 }
 
 func m2(bt uint64) {
-        nd.Method_entry(bt, "a.b.m2")
-        nd.Method_exit(bt, "a.b.m2")
+	nd.Method_entry(bt, "a.b.m2")
+	nd.Method_exit(bt, "a.b.m2")
 }
 
-=======
-}
-
-func m2(bt uint64) {
-        nd.Method_entry(bt, "a.b.m2")
-        nd.Method_exit(bt, "a.b.m2")
-}
-
->>>>>>> 83364ee12299b7fc92d14c26331a21466b5ef90a
 func m3(bt uint64) {
-        nd.Method_entry(bt, "a.b.m3")
-        nd.Method_exit(bt, "a.b.m3")
+	nd.Method_entry(bt, "a.b.m3")
+	nd.Method_exit(bt, "a.b.m3")
 }
+
 func m4(bt uint64) {
-        nd.Method_entry(bt, "a.b.m4")
-        nd.Method_exit(bt, "a.b.m4")
+	nd.Method_entry(bt, "a.b.m4")
+	nd.Method_exit(bt, "a.b.m4")
 }
+
 func m5(bt uint64) {
-        nd.Method_entry(bt, "a.b.m5")
-        nd.Method_exit(bt, "a.b.m5")
+	nd.Method_entry(bt, "a.b.m5")
+	nd.Method_exit(bt, "a.b.m5")
 }
 
 func m6(bt uint64) {
-        nd.Method_entry(bt, "a.b.m6")
-        nd.Method_exit(bt, "a.b.m6")
+	nd.Method_entry(bt, "a.b.m6")
+	nd.Method_exit(bt, "a.b.m6")
 }
 
 func m7(bt uint64) {
-        nd.Method_entry(bt, "a.b.m7")
-        nd.Method_exit(bt, "a.b.m7")
+	nd.Method_entry(bt, "a.b.m7")
+	nd.Method_exit(bt, "a.b.m7")
 }
+
 func m8(bt uint64) {
-        nd.Method_entry(bt, "a.b.m8")
-        nd.Method_exit(bt, "a.b.m8")
+	nd.Method_entry(bt, "a.b.m8")
+	nd.Method_exit(bt, "a.b.m8")
 }
-func mainAdmin(c echo.Context)error{
-        req := c.Request()
-        ctx := req.Context()
-        bt := ctx.Value("CavissonTx").(uint64)
-        callgorm(ctx)
-        m1(bt)
-        m2(bt)
-       
-        return c.String(http.StatusOK,"ID is coming")
+
+func mainAdmin(c echo.Context) error {
+	req := c.Request()
+	ctx := req.Context()
+	bt := ctx.Value("CavissonTx").(uint64)
+	callgorm(ctx)
+	m1(bt)
+	m2(bt)
+	return c.String(http.StatusOK, "ID is coming")
 
 }
 
-func check_hero(c echo.Context)error{
-        req := c.Request()
-        ctx := req.Context()
-        bt := ctx.Value("CavissonTx").(uint64)
-        callgorm(ctx)
-        m3(bt)
-        m4(bt)
-        return c.String(http.StatusOK,"hey there id conding")
+func check_hero(c echo.Context) error {
+	req := c.Request()
+	ctx := req.Context()
+	bt := ctx.Value("CavissonTx").(uint64)
+	callgorm(ctx)
+	m3(bt)
+	m4(bt)
+	return c.String(http.StatusOK, "hey there id conding")
 
 }
-func check_root(c echo.Context)error{
-        req := c.Request()
-        ctx := req.Context()
-        bt := ctx.Value("CavissonTx").(uint64)
-        callgorm(ctx)
-        m5(bt)
-        m6(bt)
-        return c.String(http.StatusOK,"hey there id conding")
-}
-func check_cavisson(c echo.Context)error{
-        req := c.Request()
-        ctx := req.Context()
-        bt := ctx.Value("CavissonTx").(uint64)
-        callgorm(ctx)
-        m7(bt)
-        m8(bt)
-        return c.String(http.StatusOK,"hey there id conding")
-}
-func main(){
-        nd.Sdk_init()
-        e:=echo.New()
-        e.Use(md.Middleware())
-        g:=e.Group("/admin")
-        g.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 
-        Format:`[${time_rfc3339}] ${status} ${method} ${host} ${path} ${latency_human}` +"\n",
+func check_root(c echo.Context) error {
+	req := c.Request()
+	ctx := req.Context()
+	bt := ctx.Value("CavissonTx").(uint64)
+	callgorm(ctx)
+	m5(bt)
+	m6(bt)
+	return c.String(http.StatusOK, "hey there id conding")
+}
 
-        }))
-        g.Use(middleware.BasicAuth(func(username string,password string,c echo.Context)(bool,error){
-        if username =="cavisson" && password =="cavisson"{
-                return true,nil
-        }
-        return false,nil
-        }))
-        g.GET("/main",mainAdmin)
-        g.GET("/hero",check_hero)
-        g.GET("/root",check_root)
-        g.GET("/cavisson",check_cavisson)
-        defer nd.Sdk_free()
-        e.Start(":0000")
+func check_cavisson(c echo.Context) error {
+	req := c.Request()
+	ctx := req.Context()
+	bt := ctx.Value("CavissonTx").(uint64)
+	callgorm(ctx)
+	m7(bt)
+	m8(bt)
+	return c.String(http.StatusOK, "hey there id conding")
+}
+
+func main() {
+	nd.Sdk_init()
+	e := echo.New()
+	e.Use(md.Middleware())
+	g := e.Group("/admin")
+	g.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+
+		Format: `[${time_rfc3339}] ${status} ${method} ${host} ${path} ${latency_human}` + "\n",
+	}))
+	g.Use(middleware.BasicAuth(func(username string, password string, c echo.Context) (bool, error) {
+		if username == "cavisson" && password == "cavisson" {
+			return true, nil
+		}
+		return false, nil
+	}))
+	g.GET("/main", mainAdmin)
+	g.GET("/hero", check_hero)
+	g.GET("/root", check_root)
+	g.GET("/cavisson", check_cavisson)
+	defer nd.Sdk_free()
+	e.Start(":0000")
 }

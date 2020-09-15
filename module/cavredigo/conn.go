@@ -1,12 +1,11 @@
-package cavredigo 
+package cavredigo
 
 import (
 	"context"
+	"github.com/gomodule/redigo/redis"
+	nd "goAgent"
 	"strings"
 	"time"
-       nd "goAgent"
-	"github.com/gomodule/redigo/redis"
-       
 )
 
 type Conn interface {
@@ -46,7 +45,6 @@ type contextConn struct {
 	ctx context.Context
 }
 
-
 func (c contextConn) WithContext(ctx context.Context) Conn {
 	c.ctx = ctx
 	return c
@@ -61,9 +59,9 @@ func Do(ctx context.Context, conn redis.Conn, commandName string, args ...interf
 	if spanName == "" {
 		spanName = "(flush pipeline)"
 	}
-        bt := ctx.Value("CavissonTx").(uint64)
-        db_handle :=  nd.IP_db_callout_begin(bt ,"db.redis", spanName)
-        defer nd.IP_db_callout_end(bt , db_handle)
+	bt := ctx.Value("CavissonTx").(uint64)
+	db_handle := nd.IP_db_callout_begin(bt, "db.redis", spanName)
+	defer nd.IP_db_callout_end(bt, db_handle)
 	return conn.Do(commandName, args...)
 }
 
@@ -72,10 +70,8 @@ func DoWithTimeout(ctx context.Context, conn redis.Conn, timeout time.Duration, 
 	if spanName == "" {
 		spanName = "(flush pipeline)"
 	}
-        bt := ctx.Value("CavissonTx").(uint64)
-        db_handle :=  nd.IP_db_callout_begin(bt ,"db.redis", spanName)
-        defer nd.IP_db_callout_end(bt , db_handle)
+	bt := ctx.Value("CavissonTx").(uint64)
+	db_handle := nd.IP_db_callout_begin(bt, "db.redis", spanName)
+	defer nd.IP_db_callout_end(bt, db_handle)
 	return redis.DoWithTimeout(conn, timeout, commandName, args...)
 }
-
-

@@ -1,10 +1,10 @@
 package cavecho
 
 import (
-	nd "goAgent"
-	"net/http"
 	"github.com/labstack/echo"
-        logger "goAgent/logger"
+	nd "goAgent"
+	logger "goAgent/logger"
+	"net/http"
 )
 
 func Middleware() echo.MiddlewareFunc {
@@ -26,14 +26,14 @@ func (m *middleware) handle(c echo.Context) error {
 	req := c.Request()
 
 	if req == nil {
-           logger.ErrorPrint("Error : request not found")
-        }
+		logger.ErrorPrint("Error : request not found")
+	}
 
 	name := c.Path()
 
 	if name == "" {
-           logger.ErrorPrint("Error : name not found")
-        }
+		logger.ErrorPrint("Error : name not found")
+	}
 
 	req = nd.Start_transacation(name, req)
 
@@ -45,7 +45,7 @@ func (m *middleware) handle(c echo.Context) error {
 
 	nd.BT_store(bt, unique_id)
 
-        resp := c.Response()
+	resp := c.Response()
 
 	var handlerErr error
 

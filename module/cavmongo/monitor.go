@@ -1,16 +1,16 @@
 package cavmongo
 
 import (
-       
 	"context"
-	"sync"
-       logger "goAgent/logger"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsoncodec"
 	"go.mongodb.org/mongo-driver/bson/bsonrw"
 	"go.mongodb.org/mongo-driver/event"
-        nd "goAgent"
+	nd "goAgent"
+	logger "goAgent/logger"
+	"sync"
 )
+
 var handle uint64
 var bt uint64
 var (
@@ -21,6 +21,7 @@ var (
 		},
 	}
 )
+
 func CommandMonitor() *event.CommandMonitor {
 	cm := commandMonitor{
 		bsonRegistry: bson.DefaultRegistry,
@@ -35,7 +36,7 @@ func CommandMonitor() *event.CommandMonitor {
 type commandMonitor struct {
 	bsonRegistry *bsoncodec.Registry
 
-	mu    sync.Mutex
+	mu sync.Mutex
 }
 
 type commandKey struct {
@@ -48,22 +49,21 @@ func (c *commandMonitor) started(ctx context.Context, event *event.CommandStarte
 	if collectionName, ok := collectionName(event.CommandName, event.Command); ok {
 		spanName = collectionName + "." + spanName
 	}
-                bt = ctx.Value("CavissonTx").(uint64)
-                handle =  nd.IP_db_callout_begin(bt, "db.mongodb.query" , spanName)
+	bt = ctx.Value("CavissonTx").(uint64)
+	handle = nd.IP_db_callout_begin(bt, "db.mongodb.query", spanName)
 	if len(event.Command) > 0 {
 		sw := swPool.Get().(*bsonrw.SliceWriter)
 		ejvw := extjPool.Get(sw, false /* non-canonical */, false /* don't escape HTML */)
 		ec := bsoncodec.EncodeContext{Registry: c.bsonRegistry}
 		if enc, err := bson.NewEncoderWithContext(ec, ejvw); err == nil {
 			if err := enc.Encode(event.Command); err != nil {
-                    logger.ErrorPrint("Error : come from encode bson")               
+				logger.ErrorPrint("Error : come from encode bson")
 			}
 		}
 		*sw = (*sw)[:0]
 		extjPool.Put(ejvw)
 		swPool.Put(sw)
 	}
-
 
 	c.mu.Lock()
 	c.mu.Unlock()
@@ -81,8 +81,8 @@ func (c *commandMonitor) finished(ctx context.Context, event *event.CommandFinis
 
 	c.mu.Lock()
 	c.mu.Unlock()
-        bt = ctx.Value("CavissonTx").(uint64)
-        nd.IP_db_callout_end(bt , handle )
+	bt = ctx.Value("CavissonTx").(uint64)
+	nd.IP_db_callout_end(bt, handle)
 }
 
 func collectionName(commandName string, command bson.Raw) (string, bool) {

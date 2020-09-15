@@ -1,4 +1,3 @@
-
 package cavgorilla
 
 import (
@@ -6,9 +5,8 @@ import (
 
 	"github.com/gorilla/mux"
 
+	logger "goAgent/logger"
 	"goAgent/module/cavhttp"
- logger "goAgent/logger"
-
 )
 
 func Instrument(r *mux.Router) {
@@ -21,7 +19,7 @@ func Instrument(r *mux.Router) {
 func WrapNotFoundHandler(h http.Handler, m mux.MiddlewareFunc) http.Handler {
 	if h == nil {
 		h = http.NotFoundHandler()
-                logger.ErrorPrint("Error : handler not found")
+		logger.ErrorPrint("Error : handler not found")
 
 	}
 	return m(h)
@@ -30,7 +28,7 @@ func WrapMethodNotAllowedHandler(h http.Handler, m mux.MiddlewareFunc) http.Hand
 	if h == nil {
 		h = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			w.WriteHeader(http.StatusMethodNotAllowed)
-                        logger.ErrorPrint("Error : method not found")
+			logger.ErrorPrint("Error : method not found")
 
 		})
 	}
@@ -42,5 +40,3 @@ func Middleware() mux.MiddlewareFunc {
 		return cavhttp.Wrap(h)
 	}
 }
-
-

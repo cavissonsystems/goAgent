@@ -9,7 +9,7 @@ import (
 func DriverName(d driver.Driver) string {
 	t := reflect.TypeOf(d)
 	if t.Kind() == reflect.Ptr {
-	   t = t.Elem()
+		t = t.Elem()
 	}
 	switch t.Name() {
 	case "SQLiteDriver":
@@ -18,10 +18,9 @@ func DriverName(d driver.Driver) string {
 		return "mysql"
 	case "Driver":
 
-	if strings.HasSuffix(t.PkgPath(), "github.com/lib/pq") {
-	   return "postgresql"
+		if strings.HasSuffix(t.PkgPath(), "github.com/lib/pq") {
+			return "postgresql"
 		}
 	}
 	return "generic"
 }
-

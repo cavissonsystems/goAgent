@@ -3,9 +3,9 @@ package cavsql
 import (
 	"database/sql"
 	"database/sql/driver"
+	_ "github.com/go-sql-driver/mysql"
 	"goAgent/internal/sqlutil"
 	"sync"
-	_ "github.com/go-sql-driver/mysql"
 )
 
 const DriverPrefix = "cav/"
@@ -49,7 +49,7 @@ func newTracingDriver(driver driver.Driver, opts ...WrapOption) *tracingDriver {
 
 func DriverDSNParser(driverName string) DSNParserFunc {
 	driversMu.RLock()
-        driver := drivers[driverName]
+	driver := drivers[driverName]
 	defer driversMu.RUnlock()
 
 	if driver == nil {
@@ -59,10 +59,10 @@ func DriverDSNParser(driverName string) DSNParserFunc {
 }
 
 type DSNInfo struct {
-	Address string
-	Port int
+	Address  string
+	Port     int
 	Database string
-	User string
+	User     string
 }
 
 type DSNParserFunc func(dsn string) DSNInfo

@@ -1,11 +1,11 @@
 package cavgoredis
+
 import (
+	"context"
 	"github.com/go-redis/redis"
 	nd "goAgent"
-	"context"
+	logger "goAgent/logger"
 	"strings"
- logger "goAgent/logger"
-
 )
 
 type Client interface {
@@ -112,9 +112,9 @@ func (c contextRingClient) WithContext(ctx context.Context) Client {
 func process(ctx context.Context) func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
 	return func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
 		return func(cmd redis.Cmder) error {
-                        bt := ctx.Value("CavissonTx").(uint64)
-                        db_handle :=  nd.IP_db_callout_begin(bt ,"db.redis", cmd.Name())
-                        defer nd.IP_db_callout_end(bt , db_handle)
+			bt := ctx.Value("CavissonTx").(uint64)
+			db_handle := nd.IP_db_callout_begin(bt, "db.redis", cmd.Name())
+			defer nd.IP_db_callout_end(bt, db_handle)
 			return oldProcess(cmd)
 		}
 	}
@@ -122,17 +122,17 @@ func process(ctx context.Context) func(oldProcess func(cmd redis.Cmder) error) f
 func processPipeline(ctx context.Context) func(oldProcess func(cmds []redis.Cmder) error) func(cmds []redis.Cmder) error {
 	return func(oldProcess func(cmds []redis.Cmder) error) func(cmds []redis.Cmder) error {
 		return func(cmds []redis.Cmder) error {
-			        for i := len(cmds); i > 0; i-- {
+			for i := len(cmds); i > 0; i-- {
 				cmdName := strings.ToUpper(cmds[i-1].Name())
 				if cmdName == "" {
 					cmdName = "(empty command)"
-                                        logger.ErrorPrint("Error : command not found")
+					logger.ErrorPrint("Error : command not found")
 
 				}
 
-                                bt := ctx.Value("CavissonTx").(uint64)
-                                db_handle :=  nd.IP_db_callout_begin(bt ,"db.redis", cmdName)
-                                defer nd.IP_db_callout_end(bt , db_handle)
+				bt := ctx.Value("CavissonTx").(uint64)
+				db_handle := nd.IP_db_callout_begin(bt, "db.redis", cmdName)
+				defer nd.IP_db_callout_end(bt, db_handle)
 			}
 
 			return oldProcess(cmds)

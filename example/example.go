@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"time"
-	logger "goAgent/logger"
 	nd "goAgent"
+	logger "goAgent/logger"
+	"time"
 )
 
 func m1(bt uint64) {

@@ -2,8 +2,8 @@ package cavhttprouter
 
 import (
 	"context"
-	"net/http"
 	"github.com/julienschmidt/httprouter"
+	"net/http"
 )
 
 type Router struct {
@@ -12,11 +12,10 @@ type Router struct {
 
 func New() *Router {
 	router := httprouter.New()
-	router.NotFound = WrapNotFoundHandler(router.NotFound )
-	router.MethodNotAllowed = WrapMethodNotAllowedHandler(router.MethodNotAllowed )
+	router.NotFound = WrapNotFoundHandler(router.NotFound)
+	router.MethodNotAllowed = WrapMethodNotAllowedHandler(router.MethodNotAllowed)
 	return &Router{
 		Router: router,
-
 	}
 }
 
@@ -64,4 +63,3 @@ func (r *Router) POST(path string, handle httprouter.Handle) {
 func (r *Router) PUT(path string, handle httprouter.Handle) {
 	r.Router.PUT(path, Wrap(handle, path))
 }
-

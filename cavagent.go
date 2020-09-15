@@ -24,9 +24,9 @@ import "C"
 
 import (
 	"context"
+	logger "goAgent/logger"
 	"net/http"
 	"unsafe"
-	logger "goAgent/logger"
 )
 
 func Method_entry(bt uint64, method string) {
@@ -59,9 +59,8 @@ func RequestWithContext(ctx context.Context, req *http.Request) *http.Request {
 	return reqCopy
 }
 
-
 func Start_transacation(name string, req *http.Request) *http.Request {
-        bt := BT_begin(name, "")
+	bt := BT_begin(name, "")
 	var str string = "Error: bt returned can't be zero"
 	if bt == 0 {
 		logger.ErrorPrint(str)

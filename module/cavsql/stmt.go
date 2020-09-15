@@ -7,8 +7,8 @@ import (
 
 func newStmt(in driver.Stmt, conn *conn, query string) driver.Stmt {
 	stmt := &stmt{
-		Stmt: in,
-		conn: conn,
+		Stmt:  in,
+		conn:  conn,
 		query: query,
 	}
 	stmt.columnConverter, _ = in.(driver.ColumnConverter)
